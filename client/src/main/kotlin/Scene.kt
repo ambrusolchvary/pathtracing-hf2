@@ -28,7 +28,8 @@ class Scene (
   lateinit var defaultFramebuffer : DefaultFramebuffer
   lateinit var framebuffers : Array<Framebuffer>
   //LABTODO: frame count
-
+  var frameCount = 0
+  
   //LABTODO: randoms
   val randoms by Vec4Array(64)
 
@@ -71,7 +72,7 @@ class Scene (
     lights[0].powerDensity.set(0.0f, 0.0f, 0.0f);
     lights[1].position.set(1.0f, 1.0f, 0.0f, 0.0f).normalize();
     lights[1].position.xyz.normalize();
-    lights[1].powerDensity.set(1.0f, 1.0f, 1.0f);    
+    lights[1].powerDensity.set(0.0f, 1.0f, 0.0f);    
 
     envTexture.set(TextureCube(gl, 
       "media/posx512.jpg",
@@ -107,7 +108,7 @@ class Scene (
 
     //LABTODO: generate randoms
     val randomInts = Uint32Array(4096)
-    crypto.getRandomValues(randomInts)
+  /*  crypto.getRandomValues(randomInts)
 
     val rndv4 = Vec4Array(128)
     var k = 0;
@@ -125,7 +126,9 @@ class Scene (
         }
       }
     }
-    /*
+*/  
+    var i = 0
+    var j = 0
     while(j < 64 && i < 2048) {
       val x = randomInts[i+0].toFloat() / 4294967295.0f * 2.0f - 1.0f;
       val y = randomInts[i+1].toFloat() / 4294967295.0f * 2.0f - 1.0f;
@@ -137,7 +140,7 @@ class Scene (
       }
       i+=4
     }
-*/
+
     //LABTODO: render to texture, average with previous frame
     traceProgram["previousFrame"]?.set(framebuffers[1].targets[0])
     framebuffers[0].bind(gl)   

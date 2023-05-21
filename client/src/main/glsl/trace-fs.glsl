@@ -28,6 +28,7 @@ uniform struct {
   //sampler2D averageFrame;
 } program;
 
+
 in vec2 tex;
 in vec4 rayDir;
 
@@ -137,7 +138,7 @@ void main(void) {
 
       vec4 gradient = hit * quadrics[i].surface + quadrics[i].surface * hit;
       vec3 normal = normalize(gradient.xyz);
-      float ior = 0.8;
+      float ior = 0.2;
       if(dot(normal, d.xyz) > 0.0){
   	    normal = -normal;
         ior = 1.0 / ior;
@@ -147,9 +148,9 @@ void main(void) {
 
       e = hit;
       vec3 reflDir = reflect(d.xyz, normal); 
-      vec3 refrDir = refract(d.xyz, normal, ior); //ior vagy akar konstans 0.99
+      vec3 refrDir = refract(d.xyz, normal, ior);
       if(dot(refrDir, refrDir) < 0.01){  // Ha a toresi irany hossza 0.01-nel kisebb, akkor tukrozodjon.
-        refrDir = reflDir;                    // Megakadalyozza a tul gyakor toreseket -> jobb kepminoseg
+        refrDir = reflDir;                    // Megakadalyozza a tul gyakori toreseket -> jobb kepminoseg
       }
 
       float reflectance = pow(dot(d.xyz, normal) + 1.0, 5.0); 
@@ -159,7 +160,10 @@ void main(void) {
         d.xyz = refrDir;
       }
 
-      d.xyz = normal + normalize(scene.randoms[iBounce].xyz);
+      //d.xyz = normalize(normal + normalize(scene.randoms[iBounce].xyz));
+
+ 
+
       if(dot(d.xyz, normal) > 0.0)
         e.xyz += normal * 0.001;
       else
@@ -167,12 +171,11 @@ void main(void) {
       /*vec3 reflDir = reflect(d.xyz, normal);
       d.xyz = reflDir; */
       //LABTODO: path tracing
-      w *= vec3(0.3, 0.3, 0.33);
+      w *= vec3(0.97, 0.975, 0.97); // tukor visszaverodesi tenyezoje
     } else {
-      radianceToEye += w * texture(scene.envTexture, d.xyz).rgb;
+      radianceToEye += w * texture(scene.envTexture, d.xyz).rgb * 1.5;
       break;
     }
   }
-  fragmentColor = vec4(radianceToEye, 1) * 0.02 +
-                  texture(program.previousFrame, tex) * 0.99; /*LABTODO: average frames*/
+  fragmentColor = vec4(radianceToEye, 1); 
 }
